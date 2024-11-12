@@ -1,3 +1,4 @@
+use async_openai::types::ResponseFormat;
 use futures::Future;
 use std::{pin::Pin, sync::Arc};
 use tokio::sync::Mutex;
@@ -27,6 +28,7 @@ pub struct CallOptions {
     pub functions: Option<Vec<FunctionDefinition>>,
     pub function_call_behavior: Option<FunctionCallBehavior>,
     pub stream_usage: Option<bool>,
+    pub response_format: Option<ResponseFormat>,
 }
 
 impl Default for CallOptions {
@@ -54,6 +56,7 @@ impl CallOptions {
             functions: None,
             function_call_behavior: None,
             stream_usage: None,
+            response_format: None,
         }
     }
 
@@ -154,6 +157,11 @@ impl CallOptions {
         self
     }
 
+    pub fn with_response_format(mut self, response_format: ResponseFormat) -> Self {
+        self.response_format = Some(response_format);
+        self
+    }
+
     pub fn merge_options(&mut self, incoming_options: CallOptions) {
         // For simple scalar types wrapped in Option, prefer incoming option if it is Some
         self.candidate_count = incoming_options.candidate_count.or(self.candidate_count);
@@ -176,7 +184,9 @@ impl CallOptions {
             .function_call_behavior
             .or(self.function_call_behavior.clone());
         self.stream_usage = incoming_options.stream_usage.or(self.stream_usage);
-
+        self.response_format = incoming_options
+            .response_format
+            .or(self.response_format.clone());
         // For `Vec<String>`, merge if both are Some; prefer incoming if only incoming is Some
         if let Some(mut new_stop_words) = incoming_options.stop_words {
             if let Some(existing_stop_words) = &mut self.stop_words {

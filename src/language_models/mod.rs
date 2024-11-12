@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod llm;
 pub mod options;
+pub mod response_format;
 
 mod error;
 pub use error::*;

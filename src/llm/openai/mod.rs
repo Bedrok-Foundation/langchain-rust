@@ -299,6 +299,10 @@ impl<C: Config> OpenAI<C> {
             request_builder.stop(stop_words);
         }
 
+        if let Some(response_format) = &self.options.response_format {
+            request_builder.response_format(response_format.clone());
+        }
+
         if let Some(behavior) = &self.options.functions {
             let mut functions = Vec::new();
             for f in behavior.iter() {
