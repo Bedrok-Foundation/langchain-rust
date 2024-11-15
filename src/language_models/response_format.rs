@@ -1,8 +1,8 @@
 use schemars::{schema_for, JsonSchema};
-use serde::{de::DeserializeOwned, ser::Serialize};
+use serde::de::DeserializeOwned;
 
 pub trait GenerateSchema {
-    fn generate_schema<T: Serialize + DeserializeOwned + JsonSchema>(
+    fn generate_schema<T: DeserializeOwned + JsonSchema>(
         description: Option<String>,
         name: String,
         strict: Option<bool>,
@@ -10,7 +10,7 @@ pub trait GenerateSchema {
 }
 
 impl GenerateSchema for async_openai::types::ResponseFormatJsonSchema {
-    fn generate_schema<T: Serialize + DeserializeOwned + JsonSchema>(
+    fn generate_schema<T: DeserializeOwned + JsonSchema>(
         description: Option<String>,
         name: String,
         strict: Option<bool>,
